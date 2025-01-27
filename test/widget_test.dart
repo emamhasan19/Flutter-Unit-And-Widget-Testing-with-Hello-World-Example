@@ -29,5 +29,72 @@ void main() {
       expect(helloWorldWidget, findsOneWidget);
     });
 
+    testWidgets('App bar has correct title', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+
+      final titleFinder = find.text('Hello World App');
+      expect(titleFinder, findsOneWidget);
+
+      final appBarFinder = find.byType(AppBar);
+      expect(appBarFinder, findsOneWidget);
+
+      final AppBar appBar = tester.widget(appBarFinder);
+      expect(appBar.title, isA<Text>());
+    });
+
+    testWidgets('MaterialApp uses default theme', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+
+      final MaterialApp app = tester.widget(find.byType(MaterialApp));
+      expect(app.theme, isNull);
+      expect(app.darkTheme, isNull);
+    });
+
+    testWidgets('Scaffold has correct structure', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+
+      final scaffoldFinder = find.byType(Scaffold);
+      expect(scaffoldFinder, findsOneWidget);
+
+      final Scaffold scaffold = tester.widget(scaffoldFinder);
+      expect(scaffold.appBar, isNotNull);
+      expect(scaffold.body, isA<Center>());
+    });
+
+    testWidgets('Text widget has default text style', (WidgetTester tester) async {
+      await tester.pumpWidget(MaterialApp(home: HelloWorldWidget()));
+
+      final Text textWidget = tester.widget(find.text('Hello, World!'));
+      expect(textWidget.style, isNull);
+      expect(textWidget.textAlign, isNull);
+    });
+
+    testWidgets('App renders without overflow', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('App handles different screen sizes', (WidgetTester tester) async {
+      final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
+
+      // Test small screen
+      await binding.setSurfaceSize(const Size(320, 480));
+      await tester.pumpWidget(MyApp());
+      expect(find.text('Hello, World!'), findsOneWidget);
+
+      // Test large screen
+      await binding.setSurfaceSize(const Size(1024, 768));
+      await tester.pumpWidget(MyApp());
+      expect(find.text('Hello, World!'), findsOneWidget);
+    });
+
+    testWidgets('Text remains visible after frame', (WidgetTester tester) async {
+      await tester.pumpWidget(MyApp());
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.text('Hello, World!'), findsOneWidget);
+    });
+
   });
 }
