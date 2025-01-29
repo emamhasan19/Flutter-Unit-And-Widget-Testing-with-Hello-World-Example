@@ -48,208 +48,37 @@ test/
 ```
 
 
-## Sample Unit Test
+## Sample Unit Test Cases
 
-```
-void main() {
-  //group is used for showing multiple test cases together
-  
-  group('Unit Test', () {
-    final widget = HelloWorldWidget();
-    
-    //successful test case
-    test('getHelloWorldText returns "Hello, World!" - Success', () {
-      final text = widget.getHelloWorldText();
-      expect(text, 'Hello, World!');
-    });
-    
-    //failed test case
-    test('getHelloWorldText returns "Hello, Flutter!" - Failure', () {
-      final text = widget.getHelloWorldText();
-      expect(text, 'Hello, Flutter!'); // this will fail
-    });
-    
-    test('getHelloWorldText returns non-empty string', () {
-      final text = widget.getHelloWorldText();
-      expect(text.isNotEmpty, true);
-    });
+- getHelloWorldText returns "Hello, World!".
+- getHelloWorldText returns "Hello, Flutter!" (failure case).
+- Non-empty string.
+- Not nullable.
+- Contains "Hello".
+- Contains "World".
+- Does not contain numbers.
+- Does not contain special characters (except comma and exclamation mark).
+- String length is 13 characters.
+- Word count is 2.
+- No leading whitespace.
+- No trailing whitespace.
+- No double spaces.
+- Only ASCII characters.
+- Words start with capital letters.
+- Remaining letters in words are lowercase.
 
-    test('getHelloWorldText is not nullable', () {
-      final text = widget.getHelloWorldText();
-      expect(text, isNotNull);
-    });
+## Sample Widget Test Cases
 
-    test('getHelloWorldText contains "Hello"', () {
-      final text = widget.getHelloWorldText();
-      expect(text.contains('Hello'), true);
-    });
-
-    test('getHelloWorldText contains "World"', () {
-      final text = widget.getHelloWorldText();
-      expect(text.contains('World'), true);
-    });
-
-    test('getHelloWorldText does not contain numbers', () {
-      final text = widget.getHelloWorldText();
-      expect(text.contains(RegExp(r'[0-9]')), false);
-    });
-
-    test('getHelloWorldText does not contain special characters except comma and exclamation', () {
-      final text = widget.getHelloWorldText();
-      expect(text.contains(RegExp(r'[^a-zA-Z,\s!]')), false);
-    });
-    
-    test('getHelloWorldText returns string with correct length', () {
-      final text = widget.getHelloWorldText();
-      expect(text.length, 13); // "Hello, World!" is 13 characters
-    });
-
-    test('getHelloWorldText has correct word count', () {
-      final text = widget.getHelloWorldText();
-      expect(text.split(' ').length, 2);
-    });
-
-    test('getHelloWorldText has no leading whitespace', () {
-      final text = widget.getHelloWorldText();
-      expect(text.startsWith(' '), false);
-    });
-
-    test('getHelloWorldText has no trailing whitespace', () {
-      final text = widget.getHelloWorldText();
-      expect(text.endsWith(' '), false);
-    });
-    
-    test('getHelloWorldText contains no double spaces', () {
-      final text = widget.getHelloWorldText();
-      expect(text.contains('  '), false);
-    });
-
-    test('getHelloWorldText contains only ASCII characters', () {
-      final text = widget.getHelloWorldText();
-      expect(text.codeUnits.every((char) => char < 128), true);
-    });
-
-    test('getHelloWorldText words start with capital letters', () {
-      final text = widget.getHelloWorldText();
-      final words = text.replaceAll('!', '').split(', ');
-      for (var word in words) {
-        expect(word[0], matches(RegExp(r'[A-Z]')));
-      }
-    });
-
-    test('getHelloWorldText remaining letters are lowercase', () {
-      final text = widget.getHelloWorldText();
-      final words = text.replaceAll('!', '').split(', ');
-      for (var word in words) {
-        expect(word.substring(1), matches(RegExp(r'^[a-z]+$')));
-      }
-    });
-  });
-}
-
-```
-
-## Sample Widget Test
-
-```
-void main() {
-  group('Widget Test', (){
-    testWidgets('HelloWorldWidget displays "Hello, World!"', (WidgetTester tester) async {
-      // Build the HelloWorldWidget inside a MaterialApp (find.text)
-      await tester.pumpWidget(MaterialApp(home: HelloWorldWidget()));
-      expect(find.text('Hello, World!'), findsOneWidget);
-    });
-
-    testWidgets('The app displays "Hello, World!" on the main screen', (WidgetTester tester) async {
-      // Build the main app (find.byKey)
-      await tester.pumpWidget(MyApp());
-      expect(find.byKey(Key('helloText')), findsOneWidget);
-    });
-
-    testWidgets('The app displays "Hello, World!" in a text widget', (WidgetTester tester) async {
-      // Build the HelloWorldWidget inside a MaterialApp (find.byWidget)
-      await tester.pumpWidget(MaterialApp(home: HelloWorldWidget()));
-      
-      // Locate the HelloWorldWidget by using the widget itself
-      final helloWorldWidget = find.byWidgetPredicate(
-            (widget) => widget is Text && widget.data == 'Hello, World!',
-        description: 'Hello World Text Widget',
-      );
-
-      expect(helloWorldWidget, findsOneWidget);
-    });
-
-    testWidgets('App bar has correct title', (WidgetTester tester) async {
-      await tester.pumpWidget(MyApp());
-
-      final titleFinder = find.text('Hello World App');
-      expect(titleFinder, findsOneWidget);
-
-      final appBarFinder = find.byType(AppBar);
-      expect(appBarFinder, findsOneWidget);
-
-      final AppBar appBar = tester.widget(appBarFinder);
-      expect(appBar.title, isA<Text>());
-    });
-
-    testWidgets('MaterialApp uses default theme', (WidgetTester tester) async {
-      await tester.pumpWidget(MyApp());
-
-      final MaterialApp app = tester.widget(find.byType(MaterialApp));
-      expect(app.theme, isNull);
-      expect(app.darkTheme, isNull);
-    });
-
-    testWidgets('Scaffold has correct structure', (WidgetTester tester) async {
-      await tester.pumpWidget(MyApp());
-
-      final scaffoldFinder = find.byType(Scaffold);
-      expect(scaffoldFinder, findsOneWidget);
-
-      final Scaffold scaffold = tester.widget(scaffoldFinder);
-      expect(scaffold.appBar, isNotNull);
-      expect(scaffold.body, isA<Center>());
-    });
-
-    testWidgets('Text widget has default text style', (WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(home: HelloWorldWidget()));
-
-      final Text textWidget = tester.widget(find.text('Hello, World!'));
-      expect(textWidget.style, isNull);
-      expect(textWidget.textAlign, isNull);
-    });
-
-    testWidgets('App renders without overflow', (WidgetTester tester) async {
-      await tester.pumpWidget(MyApp());
-
-      expect(tester.takeException(), isNull);
-    });
-
-    testWidgets('App handles different screen sizes', (WidgetTester tester) async {
-      final TestWidgetsFlutterBinding binding = TestWidgetsFlutterBinding.ensureInitialized();
-
-      // Test small screen
-      await binding.setSurfaceSize(const Size(320, 480));
-      await tester.pumpWidget(MyApp());
-      expect(find.text('Hello, World!'), findsOneWidget);
-
-      // Test large screen
-      await binding.setSurfaceSize(const Size(1024, 768));
-      await tester.pumpWidget(MyApp());
-      expect(find.text('Hello, World!'), findsOneWidget);
-    });
-
-    testWidgets('Text remains visible after frame', (WidgetTester tester) async {
-      await tester.pumpWidget(MyApp());
-      await tester.pump(const Duration(seconds: 1));
-
-      expect(find.text('Hello, World!'), findsOneWidget);
-    });
-
-  });
-}
-
-```
+- HelloWorldWidget displays "Hello, World!" using find.text.
+- The main app displays "Hello, World!" using a widget with a specific Key.
+- HelloWorldWidget contains a Text widget with "Hello, World!" using find.byWidgetPredicate.
+- The app bar has the correct title "Hello World App".
+- The MaterialApp uses the default theme with no custom theme applied.
+- The Scaffold structure includes an app bar and a body of type Center.
+- The Text widget with "Hello, World!" has default text style and alignment.
+- The app renders without any overflow errors.
+- The app handles different screen sizes (small and large) without issues.
+- "Hello, World!" text remains visible after a frame delay.
 
 ### [Click Here to Read Full Article](https://medium.com/@eemamhhasan/a-beginners-guide-to-unit-and-widget-testing-in-flutter-with-hello-world-example-e47862dedd95)
 
